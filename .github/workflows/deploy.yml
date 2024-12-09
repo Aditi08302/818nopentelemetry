@@ -1,3 +1,4 @@
+#Changed
 name: CI/CD Pipeline for AWS EKS
 
 on:
@@ -24,6 +25,7 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
+        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }} # Optional, if assuming a role
 
     - name: Log in to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
@@ -42,7 +44,7 @@ jobs:
     - name: Verify Cluster Connection
       run: |
         echo "Current context:" $(kubectl config current-context)
-        kubectl get nodes
+        kubectl cluster-info
 
     - name: Ensure Namespace Exists
       run: |
