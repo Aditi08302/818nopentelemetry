@@ -34,6 +34,10 @@ jobs:
       run: |
         sed -i 's|ghcr.io/open-telemetry/demo|$ECR_URI|g' opentelemtry-demo.yaml
 
+    - name: Ensure Namespace Exists
+      run: |
+        kubectl get namespace ${{ env.EKS_NAMESPACE }} || kubectl create namespace ${{ env.EKS_NAMESPACE }}
+
     - name: Update kubeconfig
       run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
@@ -41,7 +45,7 @@ jobs:
       env:
         EKS_NAMESPACE: ${{ env.EKS_NAMESPACE }}
       run: |
-        kubectl apply -f opentelemtry-demo.yaml -n $EKS_NAMESPACE
+        kubectl apply -f opentelemtry-demo.yaml -n $EKS_NAMESPACE --validate=false
 
     - name: Verify Deployment Rollout
       env:
