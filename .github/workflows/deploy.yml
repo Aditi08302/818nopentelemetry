@@ -15,9 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Step to check out the code from the repository
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    # Step to configure AWS credentials using secrets
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
@@ -25,30 +27,42 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
+    # Step to log in to Amazon ECR
     - name: Log in to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
 
+    # Update Kubernetes manifests to point to the correct container image
     - name: Update Kubernetes Manifests
       env:
         ECR_URI: ${{ env.ECR_URI }}
       run: |
         sed -i 's|ghcr.io/open-telemetry/demo|$ECR_URI|g' opentelemtry-demo.yaml
+
+    # Update kubeconfig to interact with the correct EKS cluster
     - name: Update kubeconfig
       run: |
         aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
         export KUBECONFIG=~/.kube/config
+
+    # Verify the connection to the EKS cluster
     - name: Verify Cluster Connection
       run: |
         echo "Current context:" $(kubectl config current-context)
         kubectl get nodes
+
+    # Ensure the namespace for the deployment exists
     - name: Ensure Namespace Exists
       run: |
         kubectl get namespace ${{ env.EKS_NAMESPACE }} || kubectl create namespace ${{ env.EKS_NAMESPACE }}
+
+    # Apply Kubernetes manifests to deploy to the cluster
     - name: Deploy to Kubernetes
       env:
         EKS_NAMESPACE: ${{ env.EKS_NAMESPACE }}
       run: |
         kubectl apply -f opentelemtry-demo.yaml -n $EKS_NAMESPACE --validate=false
+
+    # Verify the rollout of deployments and collect debug information on failure
     - name: Verify Deployment Rollout
       env:
         EKS_NAMESPACE: ${{ env.EKS_NAMESPACE }}
@@ -75,11 +89,13 @@ jobs:
         )
         for SERVICE in "${SERVICES[@]}"; do
           echo "Verifying rollout for deployment $SERVICE..."
+          # Fix: Increased timeout for rollout status to allow sufficient time for large or slow deployments
           kubectl rollout status deployment/$SERVICE -n $EKS_NAMESPACE --timeout=600s || {
             echo "Deployment $SERVICE failed. Collecting debug information."
+            # Fix: Added commands to collect detailed debug information for failed deployments
             kubectl describe deployment/$SERVICE -n $EKS_NAMESPACE
-            kubectl get pods -n $EKS_NAMESPACE -l app=$SERVICE
-            kubectl logs -n $EKS_NAMESPACE -l app=$SERVICE --tail=100
+            kubectl get pods -n $EKS_NAMESPACE -l app.kubernetes.io/name=$SERVICE
+            kubectl logs -n $EKS_NAMESPACE -l app.kubernetes.io/name=$SERVICE --tail=100 || true
             exit 1
           }
         done
