@@ -74,5 +74,12 @@ jobs:
           "opentelemetry-demo-kafka"
         )
         for SERVICE in "${SERVICES[@]}"; do
-          kubectl rollout status deployment/$SERVICE -n $EKS_NAMESPACE
+          echo "Verifying rollout for deployment $SERVICE..."
+          kubectl rollout status deployment/$SERVICE -n $EKS_NAMESPACE --timeout=600s || {
+            echo "Deployment $SERVICE failed. Collecting debug information."
+            kubectl describe deployment/$SERVICE -n $EKS_NAMESPACE
+            kubectl get pods -n $EKS_NAMESPACE -l app=$SERVICE
+            kubectl logs -n $EKS_NAMESPACE -l app=$SERVICE --tail=100
+            exit 1
+          }
         done
