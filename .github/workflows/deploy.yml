@@ -28,28 +28,28 @@ jobs:
         ECR_URI: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo
       run: |
         IMAGES=(
-            "frontendproxy"
-            "loadgenerator"
-            "frontend"
-            "checkoutservice"
-            "currencyservice"
-            "shippingservice"
-            "frauddetectionservice"
-            "recommendationservice"
-            "adservice"
-            "productcatalogservice"
-            "quoteservice"
-            "flagdui"
-            "cartservice"
-            "accountingservice"
-            "emailservice"
-            "paymentservice"
-            "imageprovider"
-            "kafka"
+          "frontendproxy"
+          "loadgenerator"
+          "frontend"
+          "checkoutservice"
+          "currencyservice"
+          "shippingservice"
+          "frauddetectionservice"
+          "recommendationservice"
+          "adservice"
+          "productcatalogservice"
+          "quoteservice"
+          "flagdui"
+          "cartservice"
+          "accountingservice"
+          "emailservice"
+          "paymentservice"
+          "imageprovider"
+          "kafka"
         )
         for IMAGE in "${IMAGES[@]}"; do
-            docker build -t $ECR_URI:$IMAGE -f ./Dockerfile .
-            docker push $ECR_URI:$IMAGE
+          docker build -t $ECR_URI:$IMAGE -f ./Dockerfile .
+          docker push $ECR_URI:$IMAGE
         done
 
   deploy:
@@ -75,74 +75,15 @@ jobs:
       run: |
         kubectl apply -f kubernetes/opentelemetry-demo.yaml -n otel-demo
 
-    - name: Verify Deployment Rollout: frontendproxy
+    - name: Verify Deployment Rollout for frontendproxy
       run: |
         kubectl rollout status deployment/frontendproxy -n otel-demo
 
-    - name: Verify Deployment Rollout: loadgenerator
+    - name: Verify Deployment Rollout for Other Services
       run: |
-        kubectl rollout status deployment/loadgenerator -n otel-demo
-
-    - name: Verify Deployment Rollout: frontend
-      run: |
-        kubectl rollout status deployment/frontend -n otel-demo
-
-    - name: Verify Deployment Rollout: checkoutservice
-      run: |
-        kubectl rollout status deployment/checkoutservice -n otel-demo
-
-    - name: Verify Deployment Rollout: currencyservice
-      run: |
-        kubectl rollout status deployment/currencyservice -n otel-demo
-
-    - name: Verify Deployment Rollout: shippingservice
-      run: |
-        kubectl rollout status deployment/shippingservice -n otel-demo
-
-    - name: Verify Deployment Rollout: frauddetectionservice
-      run: |
-        kubectl rollout status deployment/frauddetectionservice -n otel-demo
-
-    - name: Verify Deployment Rollout: recommendationservice
-      run: |
-        kubectl rollout status deployment/recommendationservice -n otel-demo
-
-    - name: Verify Deployment Rollout: adservice
-      run: |
-        kubectl rollout status deployment/adservice -n otel-demo
-
-    - name: Verify Deployment Rollout: productcatalogservice
-      run: |
-        kubectl rollout status deployment/productcatalogservice -n otel-demo
-
-    - name: Verify Deployment Rollout: quoteservice
-      run: |
-        kubectl rollout status deployment/quoteservice -n otel-demo
-
-    - name: Verify Deployment Rollout: flagdui
-      run: |
-        kubectl rollout status deployment/flagdui -n otel-demo
-
-    - name: Verify Deployment Rollout: cartservice
-      run: |
-        kubectl rollout status deployment/cartservice -n otel-demo
-
-    - name: Verify Deployment Rollout: accountingservice
-      run: |
-        kubectl rollout status deployment/accountingservice -n otel-demo
-
-    - name: Verify Deployment Rollout: emailservice
-      run: |
-        kubectl rollout status deployment/emailservice -n otel-demo
-
-    - name: Verify Deployment Rollout: paymentservice
-      run: |
-        kubectl rollout status deployment/paymentservice -n otel-demo
-
-    - name: Verify Deployment Rollout: imageprovider
-      run: |
-        kubectl rollout status deployment/imageprovider -n otel-demo
-
-    - name: Verify Deployment Rollout: kafka
-      run: |
-        kubectl rollout status deployment/kafka -n otel-demo
+        for SERVICE in loadgenerator frontend checkoutservice currencyservice \
+                      shippingservice frauddetectionservice recommendationservice \
+                      adservice productcatalogservice quoteservice flagdui cartservice \
+                      accountingservice emailservice paymentservice imageprovider kafka; do
+          kubectl rollout status deployment/$SERVICE -n otel-demo
+        done
