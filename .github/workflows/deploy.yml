@@ -48,7 +48,7 @@ jobs:
             "kafka"
         )
         for IMAGE in "${IMAGES[@]}"; do
-            docker build -t $ECR_URI:$IMAGE -f ./Dockerfile .
+            docker build -t $ECR_URI:$IMAGE
             docker push $ECR_URI:$IMAGE
         done
 
