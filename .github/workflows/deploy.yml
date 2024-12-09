@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+env:
+  ECR_URI: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo
+  AWS_REGION: us-east-1
+  EKS_CLUSTER_NAME: Kubernetes-demo
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -13,19 +18,23 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    - name: Set short git commit SHA
+      id: commit
+      uses: prompt/actions-commit-hash@v2
+
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Log in to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build and Push Docker Images
+    - name: Build, Tag, and Push Docker Images
       env:
-        ECR_URI: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo
+        IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
         IMAGES=(
           "frontendproxy"
@@ -48,8 +57,8 @@ jobs:
           "kafka"
         )
         for IMAGE in "${IMAGES[@]}"; do
-          docker build -t $ECR_URI:$IMAGE -f ./Dockerfile .
-          docker push $ECR_URI:$IMAGE
+          docker build -t $ECR_URI:$IMAGE_TAG-$IMAGE -f ./Dockerfile .
+          docker push $ECR_URI:$IMAGE_TAG-$IMAGE
         done
 
   deploy:
@@ -60,30 +69,40 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+    - name: Update kube config
+      run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
 
     - name: Update Kubernetes Manifests
+      env:
+        IMAGE_TAG: ${{ steps.commit.outputs.short }}
       run: |
-        sed -i 's|ghcr.io/open-telemetry/demo|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo|g' kubernetes/opentelemetry-demo.yaml
+        sed -i.bak "s|ghcr.io/open-telemetry/demo|$ECR_URI:$IMAGE_TAG|g" kubernetes/opentelemetry-demo.yaml
 
     - name: Deploy to Kubernetes
-      run: |
-        kubectl apply -f kubernetes/opentelemetry-demo.yaml -n otel-demo
+      run: kubectl apply -f kubernetes/opentelemetry-demo.yaml -n otel-demo
 
-    - name: Verify Deployment Rollout for frontendproxy
+    - name: Verify Deployment Rollout
       run: |
-        kubectl rollout status deployment/frontendproxy -n otel-demo
-
-    - name: Verify Deployment Rollout for Other Services
-      run: |
-        for SERVICE in loadgenerator frontend checkoutservice currencyservice \
-                      shippingservice frauddetectionservice recommendationservice \
-                      adservice productcatalogservice quoteservice flagdui cartservice \
-                      accountingservice emailservice paymentservice imageprovider kafka; do
+        SERVICES=(
+          "frontendproxy"
+          "loadgenerator"
+          "frontend"
+          "checkoutservice"
+          "currencyservice"
+          "shippingservice"
+          "frauddetectionservice"
+          "recommendationservice"
+          "adservice"
+          "productcatalogservice"
+          "quoteservice"
+          "flagdui"
+          "cartservice"
+          "accountingservice"
+          "emailservice"
+          "paymentservice"
+          "imageprovider"
+          "kafka"
+        )
+        for SERVICE in "${SERVICES[@]}"; do
           kubectl rollout status deployment/$SERVICE -n otel-demo
         done
