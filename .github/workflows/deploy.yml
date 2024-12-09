@@ -75,45 +75,74 @@ jobs:
       run: |
         kubectl apply -f kubernetes/opentelemetry-demo.yaml -n otel-demo
 
-    - name: Verify Deployment Rollout
+    - name: Verify Deployment Rollout: frontendproxy
       run: |
         kubectl rollout status deployment/frontendproxy -n otel-demo
 
+    - name: Verify Deployment Rollout: loadgenerator
       run: |
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-frontendproxy|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:frontendproxy|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-loadgenerator|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:loadgenerator|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-frontend|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:frontend|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-checkoutservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:checkoutservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-currencyservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:currencyservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-shippingservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:shippingservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-frauddetectionservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:frauddetectionservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-recommendationservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:recommendationservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-adservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:adservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-productcatalogservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:productcatalogservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-quoteservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:quoteservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-flagdui|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:flagdui|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-cartservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:cartservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-accountingservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:accountingservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-emailservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:emailservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-paymentservice|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:paymentservice|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-imageprovider|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:imageprovider|g' kubernetes/opentelemetry-demo.yaml
-        sed -i 's|ghcr.io/open-telemetry/demo:.*-kafka|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:kafka|g' kubernetes/opentelemetry-demo.yaml
-      run: |
-        kubectl rollout status deployment/frontendproxy -n otel-demo
         kubectl rollout status deployment/loadgenerator -n otel-demo
+
+    - name: Verify Deployment Rollout: frontend
+      run: |
         kubectl rollout status deployment/frontend -n otel-demo
+
+    - name: Verify Deployment Rollout: checkoutservice
+      run: |
         kubectl rollout status deployment/checkoutservice -n otel-demo
+
+    - name: Verify Deployment Rollout: currencyservice
+      run: |
         kubectl rollout status deployment/currencyservice -n otel-demo
+
+    - name: Verify Deployment Rollout: shippingservice
+      run: |
         kubectl rollout status deployment/shippingservice -n otel-demo
+
+    - name: Verify Deployment Rollout: frauddetectionservice
+      run: |
         kubectl rollout status deployment/frauddetectionservice -n otel-demo
+
+    - name: Verify Deployment Rollout: recommendationservice
+      run: |
         kubectl rollout status deployment/recommendationservice -n otel-demo
+
+    - name: Verify Deployment Rollout: adservice
+      run: |
         kubectl rollout status deployment/adservice -n otel-demo
+
+    - name: Verify Deployment Rollout: productcatalogservice
+      run: |
         kubectl rollout status deployment/productcatalogservice -n otel-demo
+
+    - name: Verify Deployment Rollout: quoteservice
+      run: |
         kubectl rollout status deployment/quoteservice -n otel-demo
+
+    - name: Verify Deployment Rollout: flagdui
+      run: |
         kubectl rollout status deployment/flagdui -n otel-demo
+
+    - name: Verify Deployment Rollout: cartservice
+      run: |
         kubectl rollout status deployment/cartservice -n otel-demo
+
+    - name: Verify Deployment Rollout: accountingservice
+      run: |
         kubectl rollout status deployment/accountingservice -n otel-demo
+
+    - name: Verify Deployment Rollout: emailservice
+      run: |
         kubectl rollout status deployment/emailservice -n otel-demo
+
+    - name: Verify Deployment Rollout: paymentservice
+      run: |
         kubectl rollout status deployment/paymentservice -n otel-demo
+
+    - name: Verify Deployment Rollout: imageprovider
+      run: |
         kubectl rollout status deployment/imageprovider -n otel-demo
+
+    - name: Verify Deployment Rollout: kafka
+      run: |
         kubectl rollout status deployment/kafka -n otel-demo
