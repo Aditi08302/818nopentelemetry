@@ -34,12 +34,19 @@ jobs:
       run: |
         sed -i 's|ghcr.io/open-telemetry/demo|$ECR_URI|g' opentelemtry-demo.yaml
 
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
+        export KUBECONFIG=~/.kube/config
+
+    - name: Verify Cluster Connection
+      run: |
+        echo "Current context:" $(kubectl config current-context)
+        kubectl get nodes
+
     - name: Ensure Namespace Exists
       run: |
         kubectl get namespace ${{ env.EKS_NAMESPACE }} || kubectl create namespace ${{ env.EKS_NAMESPACE }}
-
-    - name: Update kubeconfig
-      run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
     - name: Deploy to Kubernetes
       env:
