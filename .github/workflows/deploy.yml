@@ -1,4 +1,3 @@
-#Changed
 name: CI/CD Pipeline for AWS EKS
 
 on:
@@ -25,7 +24,6 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
-        role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }} # Optional, if assuming a role
 
     - name: Log in to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
@@ -35,50 +33,45 @@ jobs:
         ECR_URI: ${{ env.ECR_URI }}
       run: |
         sed -i 's|ghcr.io/open-telemetry/demo|$ECR_URI|g' opentelemtry-demo.yaml
-
     - name: Update kubeconfig
       run: |
         aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
         export KUBECONFIG=~/.kube/config
-
     - name: Verify Cluster Connection
       run: |
         echo "Current context:" $(kubectl config current-context)
-        kubectl cluster-info
-
+        kubectl get nodes
     - name: Ensure Namespace Exists
       run: |
         kubectl get namespace ${{ env.EKS_NAMESPACE }} || kubectl create namespace ${{ env.EKS_NAMESPACE }}
-
     - name: Deploy to Kubernetes
       env:
         EKS_NAMESPACE: ${{ env.EKS_NAMESPACE }}
       run: |
         kubectl apply -f opentelemtry-demo.yaml -n $EKS_NAMESPACE --validate=false
-
     - name: Verify Deployment Rollout
       env:
         EKS_NAMESPACE: ${{ env.EKS_NAMESPACE }}
       run: |
         SERVICES=(
-          "frontendproxy"
-          "loadgenerator"
-          "frontend"
-          "checkoutservice"
-          "currencyservice"
-          "shippingservice"
-          "frauddetectionservice"
-          "recommendationservice"
-          "adservice"
-          "productcatalogservice"
-          "quoteservice"
-          "flagdui"
-          "cartservice"
-          "accountingservice"
-          "emailservice"
-          "paymentservice"
-          "imageprovider"
-          "kafka"
+          "opentelemetry-demo-frontendproxy"
+          "opentelemetry-demo-loadgenerator"
+          "opentelemetry-demo-frontend"
+          "opentelemetry-demo-checkoutservice"
+          "opentelemetry-demo-currencyservice"
+          "opentelemetry-demo-shippingservice"
+          "opentelemetry-demo-frauddetectionservice"
+          "opentelemetry-demo-recommendationservice"
+          "opentelemetry-demo-adservice"
+          "opentelemetry-demo-productcatalogservice"
+          "opentelemetry-demo-quoteservice"
+          "opentelemetry-demo-flagd"
+          "opentelemetry-demo-cartservice"
+          "opentelemetry-demo-accountingservice"
+          "opentelemetry-demo-emailservice"
+          "opentelemetry-demo-paymentservice"
+          "opentelemetry-demo-imageprovider"
+          "opentelemetry-demo-kafka"
         )
         for SERVICE in "${SERVICES[@]}"; do
           kubectl rollout status deployment/$SERVICE -n $EKS_NAMESPACE
