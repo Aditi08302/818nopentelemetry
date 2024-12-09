@@ -11,58 +11,8 @@ env:
   EKS_NAMESPACE: otel-demo
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
-
-    - name: Log in to Amazon ECR
-      uses: aws-actions/amazon-ecr-login@v1
-
-    - name: Debug File Locations
-      run: ls -R
-
-    - name: Build and Push Docker Images
-      env:
-        ECR_URI: ${{ env.ECR_URI }}
-      run: |
-        IMAGES=(
-          "frontendproxy"
-          "loadgenerator"
-          "frontend"
-          "checkoutservice"
-          "currencyservice"
-          "shippingservice"
-          "frauddetectionservice"
-          "recommendationservice"
-          "adservice"
-          "productcatalogservice"
-          "quoteservice"
-          "flagdui"
-          "cartservice"
-          "accountingservice"
-          "emailservice"
-          "paymentservice"
-          "imageprovider"
-          "kafka"
-        )
-        for IMAGE in "${IMAGES[@]}"; do
-          docker build -t $ECR_URI:$IMAGE -f ./Dockerfile .
-          docker push $ECR_URI:$IMAGE
-        done
-
   deploy:
     runs-on: ubuntu-latest
-    needs: build-and-push
 
     steps:
     - name: Checkout Code
