@@ -8,7 +8,7 @@ on:
 env:
   ECR_URI: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo
   AWS_REGION: us-east-1
-  EKS_CLUSTER_NAME: Kubernetes-demo
+  EKS_NAMESPACE: otel-demo
 
 jobs:
   build-and-push:
@@ -17,10 +17,6 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
-
-    - name: Set short git commit SHA
-      id: commit
-      uses: prompt/actions-commit-hash@v2
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v2
@@ -32,11 +28,11 @@ jobs:
     - name: Log in to Amazon ECR
       uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build, Tag, and Push Docker Images
+    - name: Build and Push Docker Images
       env:
-        IMAGE_TAG: ${{ steps.commit.outputs.short }}
+        ECR_URI: ${{ env.ECR_URI }}
       run: |
-        IMAGES=(
+        IMAGES=( 
           "frontendproxy"
           "loadgenerator"
           "frontend"
@@ -57,8 +53,8 @@ jobs:
           "kafka"
         )
         for IMAGE in "${IMAGES[@]}"; do
-          docker build -t $ECR_URI:$IMAGE_TAG-$IMAGE -f ./Dockerfile .
-          docker push $ECR_URI:$IMAGE_TAG-$IMAGE
+          docker build -t $ECR_URI:$IMAGE -f 818nopentelemetry/Dockerfile .
+          docker push $ECR_URI:$IMAGE
         done
 
   deploy:
@@ -69,19 +65,31 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Update kube config
-      run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Update Kubernetes Manifests
       env:
-        IMAGE_TAG: ${{ steps.commit.outputs.short }}
+        ECR_URI: ${{ env.ECR_URI }}
       run: |
-        sed -i.bak "s|ghcr.io/open-telemetry/demo|$ECR_URI:$IMAGE_TAG|g" kubernetes/opentelemetry-demo.yaml
+        sed -i 's|ghcr.io/open-telemetry/demo|$ECR_URI|g' 818nopentelemetry/opentelemetry-demo.yaml
+
+    - name: Update kubeconfig
+      run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
 
     - name: Deploy to Kubernetes
-      run: kubectl apply -f kubernetes/opentelemetry-demo.yaml -n otel-demo
+      env:
+        EKS_NAMESPACE: ${{ env.EKS_NAMESPACE }}
+      run: |
+        kubectl apply -f 818nopentelemetry/opentelemetry-demo.yaml -n $EKS_NAMESPACE
 
     - name: Verify Deployment Rollout
+      env:
+        EKS_NAMESPACE: ${{ env.EKS_NAMESPACE }}
       run: |
         SERVICES=(
           "frontendproxy"
@@ -104,5 +112,5 @@ jobs:
           "kafka"
         )
         for SERVICE in "${SERVICES[@]}"; do
-          kubectl rollout status deployment/$SERVICE -n otel-demo
+          kubectl rollout status deployment/$SERVICE -n $EKS_NAMESPACE
         done
