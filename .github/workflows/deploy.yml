@@ -32,7 +32,7 @@ jobs:
       env:
         ECR_URI: ${{ env.ECR_URI }}
       run: |
-        IMAGES=( 
+        IMAGES=(
           "frontendproxy"
           "loadgenerator"
           "frontend"
@@ -53,7 +53,7 @@ jobs:
           "kafka"
         )
         for IMAGE in "${IMAGES[@]}"; do
-          docker build -t $ECR_URI:$IMAGE -f 818nopentelemetry/Dockerfile .
+          docker build -t $ECR_URI:$IMAGE -f ./Dockerfile .
           docker push $ECR_URI:$IMAGE
         done
 
@@ -76,7 +76,7 @@ jobs:
       env:
         ECR_URI: ${{ env.ECR_URI }}
       run: |
-        sed -i 's|ghcr.io/open-telemetry/demo|$ECR_URI|g' 818nopentelemetry/opentelemetry-demo.yaml
+        sed -i 's|ghcr.io/open-telemetry/demo|$ECR_URI|g' 818nopentelemetry/opentelemtry-demo.yaml
 
     - name: Update kubeconfig
       run: aws eks update-kubeconfig --name ${{ secrets.EKS_CLUSTER_NAME }} --region ${{ env.AWS_REGION }}
@@ -85,7 +85,7 @@ jobs:
       env:
         EKS_NAMESPACE: ${{ env.EKS_NAMESPACE }}
       run: |
-        kubectl apply -f 818nopentelemetry/opentelemetry-demo.yaml -n $EKS_NAMESPACE
+        kubectl apply -f 818nopentelemetry/opentelemtry-demo.yaml -n $EKS_NAMESPACE
 
     - name: Verify Deployment Rollout
       env:
