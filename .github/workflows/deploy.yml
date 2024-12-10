@@ -11,12 +11,56 @@ on:
 
 jobs:
   build:
-    uses: ./.github/workflows/component-build-images.yml
-    with:
-      push: true
-      version: '1.0.0'
-      dockerhub_repo: '' # No DockerHub, leave empty
-      ghcr_repo: '' # No GHCR, leave empty
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service:
+          - { name: accountingservice, path: ./src/accountingservice }
+          - { name: adservice, path: ./src/adservice }
+          - { name: cartservice, path: ./src/cartservice }
+          - { name: checkoutservice, path: ./src/checkoutservice }
+          - { name: currencyservice, path: ./src/currencyservice }
+          - { name: emailservice, path: ./src/emailservice }
+          - { name: frauddetectionservice, path: ./src/frauddetectionservice }
+          - { name: frontend, path: ./src/frontend }
+          - { name: paymentservice, path: ./src/paymentservice }
+          - { name: productcatalogservice, path: ./src/productcatalogservice }
+          - { name: shippingservice, path: ./src/shippingservice }
+          # Add additional services here
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Authenticate with Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and Push Docker Image
+        run: |
+          IMAGE_TAG=${{ github.sha }}
+          REPO_URI=283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo
+          SERVICE_NAME=${{ matrix.service.name }}
+          SERVICE_PATH=${{ matrix.service.path }}
+          
+          echo "Building image for $SERVICE_NAME from $SERVICE_PATH"
+          
+          # Build the Docker image
+          docker build -t $REPO_URI/$SERVICE_NAME:$IMAGE_TAG $SERVICE_PATH
+          
+          # Push the Docker image to ECR
+          docker push $REPO_URI/$SERVICE_NAME:$IMAGE_TAG
+          
+          echo "::set-output name=tag::$IMAGE_TAG"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   deploy:
     runs-on: ubuntu-latest
