@@ -17,44 +17,10 @@ services:
   # ******************
   # Core Demo Services
   # ******************
-  # Accounting service
-  accountingservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:accountingservice
-=======
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-accountingservice
->>>>>>> upstream/main
-    container_name: accounting-service
-    build:
-      context: ./
-      dockerfile: ${ACCOUNTING_SERVICE_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
-    deploy:
-      resources:
-        limits:
-          memory: 120M
-    restart: unless-stopped
-    environment:
-      - KAFKA_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=accountingservice
-    depends_on:
-      otelcol:
-        condition: service_started
-      kafka:
-        condition: service_healthy
-    logging: *logging
 
   # AdService
   adservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:adservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-adservice
->>>>>>> upstream/main
     container_name: ad-service
     build:
       context: ./
@@ -73,7 +39,6 @@ services:
     environment:
       - AD_SERVICE_PORT
       - FLAGD_HOST
-      - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -82,17 +47,11 @@ services:
     depends_on:
       otelcol:
         condition: service_started
-      flagd:
-        condition: service_started
     logging: *logging
 
   # Cart service
   cartservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:cartservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-cartservice
->>>>>>> upstream/main
     container_name: cart-service
     build:
       context: ./
@@ -109,7 +68,6 @@ services:
     environment:
       - CART_SERVICE_PORT
       - FLAGD_HOST
-      - FLAGD_PORT
       - VALKEY_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
@@ -120,17 +78,11 @@ services:
         condition: service_started
       otelcol:
         condition: service_started
-      flagd:
-        condition: service_started
     logging: *logging
 
   # Checkout service
   checkoutservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:checkoutservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-checkoutservice
->>>>>>> upstream/main
     container_name: checkout-service
     build:
       context: ./
@@ -145,16 +97,14 @@ services:
     ports:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
-      - FLAGD_HOST
-      - FLAGD_PORT
       - CHECKOUT_SERVICE_PORT
       - CART_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
       - EMAIL_SERVICE_ADDR
+      - FLAGD_HOST
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
-      - KAFKA_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -174,19 +124,11 @@ services:
         condition: service_started
       otelcol:
         condition: service_started
-      kafka:
-        condition: service_healthy
-      flagd:
-        condition: service_started
     logging: *logging
 
   # Currency service
   currencyservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:currencyservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-currencyservice
->>>>>>> upstream/main
     container_name: currency-service
     build:
       context: ./
@@ -214,15 +156,10 @@ services:
 
   # Email service
   emailservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:emailservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-emailservice
->>>>>>> upstream/main
     container_name: email-service
     build:
-      context: ./
-      dockerfile: ${EMAIL_SERVICE_DOCKERFILE}
+      context: ./src/emailservice
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
     deploy:
@@ -243,50 +180,9 @@ services:
         condition: service_started
     logging: *logging
 
-  # Fraud Detection service
-  frauddetectionservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:frauddetectionservice
-=======
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-frauddetectionservice
->>>>>>> upstream/main
-    container_name: frauddetection-service
-    build:
-      context: ./
-      dockerfile: ${FRAUD_SERVICE_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
-      args:
-        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
-    deploy:
-      resources:
-        limits:
-          memory: 300M
-    restart: unless-stopped
-    environment:
-      - FLAGD_HOST
-      - FLAGD_PORT
-      - KAFKA_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES=true
-      - OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED=true
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=frauddetectionservice
-    depends_on:
-      otelcol:
-        condition: service_started
-      kafka:
-        condition: service_healthy
-    logging: *logging
-
   # Frontend
   frontend:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:frontend
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend
->>>>>>> upstream/main
     container_name: frontend
     build:
       context: ./
@@ -341,17 +237,11 @@ services:
         condition: service_started
       imageprovider:
         condition: service_started
-      flagd:
-        condition: service_started
     logging: *logging
 
   # Frontend Proxy (Envoy)
   frontendproxy:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:frontendproxy
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-frontendproxy
->>>>>>> upstream/main
     container_name: frontend-proxy
     build:
       context: ./
@@ -394,16 +284,10 @@ services:
         condition: service_started
       grafana:
         condition: service_started
-      flagdui:
-        condition: service_started
 
   # Imageprovider
   imageprovider:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:imageprovider
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-imageprovider
->>>>>>> upstream/main
     container_name: imageprovider
     build:
       context: ./
@@ -430,11 +314,7 @@ services:
 
   # Load Generator
   loadgenerator:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:loadgenerator
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-loadgenerator
->>>>>>> upstream/main
     container_name: load-generator
     build:
       context: ./
@@ -444,7 +324,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1500M
+          memory: 120M
     restart: unless-stopped
     ports:
       - "${LOCUST_WEB_PORT}"
@@ -454,7 +334,7 @@ services:
       - LOCUST_HOST
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
-      - LOCUST_BROWSER_TRAFFIC_ENABLED=true
+      - LOCUST_BROWSER_TRAFFIC_ENABLED=false
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -472,11 +352,7 @@ services:
 
   # Payment service
   paymentservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:paymentservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-paymentservice
->>>>>>> upstream/main
     container_name: payment-service
     build:
       context: ./
@@ -491,9 +367,8 @@ services:
     ports:
       - "${PAYMENT_SERVICE_PORT}"
     environment:
-      - PAYMENT_SERVICE_PORT
       - FLAGD_HOST
-      - FLAGD_PORT
+      - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -501,17 +376,11 @@ services:
     depends_on:
       otelcol:
         condition: service_started
-      flagd:
-        condition: service_started
     logging: *logging
 
   # Product Catalog service
   productcatalogservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:productcatalogservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-productcatalogservice
->>>>>>> upstream/main
     container_name: product-catalog-service
     build:
       context: ./
@@ -526,9 +395,8 @@ services:
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
-      - PRODUCT_CATALOG_SERVICE_PORT
       - FLAGD_HOST
-      - FLAGD_PORT
+      - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -536,17 +404,11 @@ services:
     depends_on:
       otelcol:
         condition: service_started
-      flagd:
-        condition: service_started
     logging: *logging
 
   # Quote service
   quoteservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:quoteservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-quoteservice
->>>>>>> upstream/main
     container_name: quote-service
     build:
       context: ./
@@ -574,11 +436,7 @@ services:
 
   # Recommendation service
   recommendationservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:recommendationservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendationservice
->>>>>>> upstream/main
     container_name: recommendation-service
     build:
       context: ./
@@ -588,15 +446,14 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 50M
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
     environment:
+      - FLAGD_HOST
       - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
-      - FLAGD_HOST
-      - FLAGD_PORT
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -608,17 +465,11 @@ services:
         condition: service_started
       otelcol:
         condition: service_started
-      flagd:
-        condition: service_started
     logging: *logging
 
   # Shipping service
   shippingservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:shippingservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-shippingservice
->>>>>>> upstream/main
     container_name: shipping-service
     build:
       context: ./
@@ -654,7 +505,6 @@ services:
       resources:
         limits:
           memory: 75M
-    restart: unless-stopped
     environment:
       - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - FLAGD_METRICS_EXPORTER=otel
@@ -671,72 +521,6 @@ services:
       - ./src/flagd:/etc/flagd
     logging:
       *logging
-
-  # Flagd UI for configuring the feature flag service
-  flagdui:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:flagdui
-=======
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagdui
->>>>>>> upstream/main
-    container_name: flagdui
-    build:
-      context: ./
-      dockerfile: ${FLAGD_UI_DOCKERFILE}
-    deploy:
-      resources:
-        limits:
-          memory: 75M
-    restart: unless-stopped
-    environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=flagdui
-    ports:
-      - "${FLAGD_UI_PORT}"
-    depends_on:
-      otelcol:
-        condition: service_started
-      flagd:
-        condition: service_started
-    volumes:
-      - ./src/flagd:/app/data
-
-  # Kafka used by Checkout, Accounting, and Fraud Detection services
-  kafka:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:kafka
-=======
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-kafka
->>>>>>> upstream/main
-    container_name: kafka
-    build:
-      context: ./
-      dockerfile: ${KAFKA_SERVICE_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
-      args:
-        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
-    deploy:
-      resources:
-        limits:
-          memory: 600M
-    restart: unless-stopped
-    environment:
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=kafka
-      - KAFKA_HEAP_OPTS=-Xmx400m -Xms400m
-    healthcheck:
-      test: nc -z kafka 9092
-      start_period: 10s
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    logging: *logging
 
   # Valkey used by Cart service
   valkey-cart:
