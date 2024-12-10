@@ -15,17 +15,17 @@ jobs:
     strategy:
       matrix:
         service:
-          - { name: accountingservice, path: ./src/accountingservice }
-          - { name: adservice, path: ./src/adservice }
-          - { name: cartservice, path: ./src/cartservice }
-          - { name: checkoutservice, path: ./src/checkoutservice }
-          - { name: currencyservice, path: ./src/currencyservice }
-          - { name: emailservice, path: ./src/emailservice }
-          - { name: frauddetectionservice, path: ./src/frauddetectionservice }
-          - { name: frontend, path: ./src/frontend }
-          - { name: paymentservice, path: ./src/paymentservice }
-          - { name: productcatalogservice, path: ./src/productcatalogservice }
-          - { name: shippingservice, path: ./src/shippingservice }
+          - { name: accountingservice, path: ./src/accountingservice/Dockerfile }
+          - { name: adservice, path: ./src/adservice/Dockerfile }
+          - { name: cartservice, path: ./src/cartservice/Dockerfile }
+          - { name: checkoutservice, path: ./src/checkoutservice/Dockerfile }
+          - { name: currencyservice, path: ./src/currencyservice/Dockerfile }
+          - { name: emailservice, path: ./src/emailservice/Dockerfile }
+          - { name: frauddetectionservice, path: ./src/frauddetectionservice/Dockerfile }
+          - { name: frontend, path: ./src/frontend/Dockerfile }
+          - { name: paymentservice, path: ./src/paymentservice/Dockerfile }
+          - { name: productcatalogservice, path: ./src/productcatalogservice/Dockerfile }
+          - { name: shippingservice, path: ./src/shippingservice/Dockerfile }
           # Add additional services here
     steps:
       - name: Checkout Code
