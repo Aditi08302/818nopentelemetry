@@ -106,4 +106,4 @@ jobs:
 
       - name: Rollback to previous stable version
         run: |
-          kubectl rollout undo deployment/otel-demo-paymentservice
+          kubectl rollout undo deployment/otel-demo-cluster
