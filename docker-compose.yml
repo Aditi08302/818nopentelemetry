@@ -19,11 +19,7 @@ services:
   # ******************
   # Accounting service
   accountingservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:accountingservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-accountingservice
->>>>>>> upstream/main
     container_name: accounting-service
     build:
       context: ./
@@ -50,11 +46,7 @@ services:
 
   # AdService
   adservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:adservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-adservice
->>>>>>> upstream/main
     container_name: ad-service
     build:
       context: ./
@@ -88,11 +80,7 @@ services:
 
   # Cart service
   cartservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:cartservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-cartservice
->>>>>>> upstream/main
     container_name: cart-service
     build:
       context: ./
@@ -126,11 +114,7 @@ services:
 
   # Checkout service
   checkoutservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:checkoutservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-checkoutservice
->>>>>>> upstream/main
     container_name: checkout-service
     build:
       context: ./
@@ -182,11 +166,7 @@ services:
 
   # Currency service
   currencyservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:currencyservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-currencyservice
->>>>>>> upstream/main
     container_name: currency-service
     build:
       context: ./
@@ -214,11 +194,7 @@ services:
 
   # Email service
   emailservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:emailservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-emailservice
->>>>>>> upstream/main
     container_name: email-service
     build:
       context: ./
@@ -245,11 +221,7 @@ services:
 
   # Fraud Detection service
   frauddetectionservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:frauddetectionservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-frauddetectionservice
->>>>>>> upstream/main
     container_name: frauddetection-service
     build:
       context: ./
@@ -282,11 +254,7 @@ services:
 
   # Frontend
   frontend:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:frontend
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend
->>>>>>> upstream/main
     container_name: frontend
     build:
       context: ./
@@ -347,11 +315,7 @@ services:
 
   # Frontend Proxy (Envoy)
   frontendproxy:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:frontendproxy
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-frontendproxy
->>>>>>> upstream/main
     container_name: frontend-proxy
     build:
       context: ./
@@ -399,11 +363,7 @@ services:
 
   # Imageprovider
   imageprovider:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:imageprovider
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-imageprovider
->>>>>>> upstream/main
     container_name: imageprovider
     build:
       context: ./
@@ -430,11 +390,7 @@ services:
 
   # Load Generator
   loadgenerator:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:loadgenerator
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-loadgenerator
->>>>>>> upstream/main
     container_name: load-generator
     build:
       context: ./
@@ -472,11 +428,7 @@ services:
 
   # Payment service
   paymentservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:paymentservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-paymentservice
->>>>>>> upstream/main
     container_name: payment-service
     build:
       context: ./
@@ -507,11 +459,7 @@ services:
 
   # Product Catalog service
   productcatalogservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:productcatalogservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-productcatalogservice
->>>>>>> upstream/main
     container_name: product-catalog-service
     build:
       context: ./
@@ -542,11 +490,7 @@ services:
 
   # Quote service
   quoteservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:quoteservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-quoteservice
->>>>>>> upstream/main
     container_name: quote-service
     build:
       context: ./
@@ -574,11 +518,7 @@ services:
 
   # Recommendation service
   recommendationservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:recommendationservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendationservice
->>>>>>> upstream/main
     container_name: recommendation-service
     build:
       context: ./
@@ -614,11 +554,7 @@ services:
 
   # Shipping service
   shippingservice:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:shippingservice
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-shippingservice
->>>>>>> upstream/main
     container_name: shipping-service
     build:
       context: ./
@@ -674,11 +610,7 @@ services:
 
   # Flagd UI for configuring the feature flag service
   flagdui:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:flagdui
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-flagdui
->>>>>>> upstream/main
     container_name: flagdui
     build:
       context: ./
@@ -705,11 +637,7 @@ services:
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
-<<<<<<< HEAD
-    image: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo:kafka
-=======
     image: ${IMAGE_NAME}:${DEMO_VERSION}-kafka
->>>>>>> upstream/main
     container_name: kafka
     build:
       context: ./
