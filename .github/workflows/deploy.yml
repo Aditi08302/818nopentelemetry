@@ -12,55 +12,52 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        service:
-          - { name: accountingservice, path: src/accountingservice/Dockerfile }
-          - { name: adservice, path: ./src/adservice/Dockerfile }
-          - { name: cartservice, path: ./src/cartservice/Dockerfile }
-          - { name: checkoutservice, path: ./src/checkoutservice/Dockerfile }
-          - { name: currencyservice, path: ./src/currencyservice/Dockerfile }
-          - { name: emailservice, path: ./src/emailservice/Dockerfile }
-          - { name: frauddetectionservice, path: ./src/frauddetectionservice/Dockerfile }
-          - { name: frontend, path: ./src/frontend/Dockerfile }
-          - { name: paymentservice, path: ./src/paymentservice/Dockerfile }
-          - { name: productcatalogservice, path: ./src/productcatalogservice/Dockerfile }
-          - { name: shippingservice, path: ./src/shippingservice/Dockerfile }
-          # Add additional services here
+    env:
+      GITHUB_SHA: ${{ github.sha }}
     steps:
-      - name: Checkout Code
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up AWS CLI
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+
+    - name: Set up Docker Compose
+      run: |
+        sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -oP '"tag_name": "\K(.*)(?=")')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+        sudo chmod +x /usr/local/bin/docker-compose
+        docker-compose --version
+
+    - name: Authenticate with Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }} # Docker Hub username
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Verify Docker Login
+      run: docker info
+
+    - name: Build and Tag Docker Images with Docker Compose
+      run: |
+        export TAG=${{ github.sha }}
+        export IMAGE_NAME=sagarswagh/opentelemetry-demo
+        docker-compose build
+        docker-compose push
+
+  run_tests:
+    runs-on: ubuntu-latest
+    name: "Run Tests"
+    needs: build  # Ensure tests run after build
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Authenticate with Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
-      - name: Build and Push Docker Image
+      - name: Run Trace Testing
         run: |
-          IMAGE_TAG=${{ github.sha }}
-          REPO_URI=283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo
-          SERVICE_NAME=${{ matrix.service.name }}
-          SERVICE_PATH=${{ matrix.service.path }}
-          
-          echo "Building image for $SERVICE_NAME from $SERVICE_PATH"
-          
-          # Build the Docker image
-          docker build -t $REPO_URI/$SERVICE_NAME:$IMAGE_TAG $SERVICE_PATH
-          
-          # Push the Docker image to ECR
-          docker push $REPO_URI/$SERVICE_NAME:$IMAGE_TAG
-          
-          echo "::set-output name=tag::$IMAGE_TAG"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          make build && docker system prune -f && make run-tracetesting
 
   deploy:
     runs-on: ubuntu-latest
