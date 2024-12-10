@@ -108,4 +108,4 @@ jobs:
   
       - name: Rollback to previous stable version
         run: |
-          kubectl rollout undo deployment/otel-demo-app
+          kubectl rollout undo deployment/otel-demo
