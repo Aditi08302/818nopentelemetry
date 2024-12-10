@@ -176,6 +176,3 @@ jobs:
         run: |
           kubectl rollout undo deployment/opentelemetry-demo-shippingservice
 
-      - name: Rollback opentelemetry-demo-valkey
-        run: |
-          kubectl rollout undo deployment/opentelemetry-demo-valkey
