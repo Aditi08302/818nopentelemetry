@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         service:
-          - { name: accountingservice, path: ./src/accountingservice/Dockerfile }
+          - { name: accountingservice, path: src/accountingservice/Dockerfile }
           - { name: adservice, path: ./src/adservice/Dockerfile }
           - { name: cartservice, path: ./src/cartservice/Dockerfile }
           - { name: checkoutservice, path: ./src/checkoutservice/Dockerfile }
