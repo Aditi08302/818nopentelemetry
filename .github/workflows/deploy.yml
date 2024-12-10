@@ -72,7 +72,7 @@ jobs:
           
       - name: Download deployment.yaml from GitHub
         run: |
-          curl -o deployment.yaml https://raw.githubusercontent.com/clockno143/opentelemetry-demo/main/kubernetes/opentelemetry-demo.yaml # Replace with the URL to your deployment YAML file in your repository
+          curl -o deployment.yaml https://raw.githubusercontent.com/Aditi08302/818nopentelemetry/refs/heads/main/opentelemtry-demo.yaml # Replace with the URL to your deployment YAML file in your repository
 
       - name: Deploy to EKS
         run: |
