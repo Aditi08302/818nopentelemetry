@@ -88,7 +88,7 @@ jobs:
       - name: Verify Deployment
         run: |
           kubectl get pods
-          
+
   rollback:
     runs-on: ubuntu-latest
     if: failure()
@@ -99,11 +99,87 @@ jobs:
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws configure set default.region us-east-1
-
+  
       - name: Set up kubectl
         run: |
           aws eks --region us-east-1 update-kubeconfig --name otel-demo-cluster
-
-      - name: Rollback to previous stable version
+  
+      - name: Rollback opentelemetry-demo-accountingservice
         run: |
-          kubectl rollout undo deployment/opentelemetry-demo-cartservice 
+          kubectl rollout undo deployment/opentelemetry-demo-accountingservice
+
+      - name: Rollback opentelemetry-demo-adservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-adservice
+
+      - name: Rollback opentelemetry-demo-cartservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-cartservice
+
+      - name: Rollback opentelemetry-demo-checkoutservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-checkoutservice
+
+      - name: Rollback opentelemetry-demo-currencyservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-currencyservice
+
+      - name: Rollback opentelemetry-demo-emailservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-emailservice
+
+      - name: Rollback opentelemetry-demo-flagd
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-flagd
+
+      - name: Rollback opentelemetry-demo-frauddetectionservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-frauddetectionservice
+
+      - name: Rollback opentelemetry-demo-frontend
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-frontend
+
+      - name: Rollback opentelemetry-demo-frontendproxy
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-frontendproxy
+
+      - name: Rollback opentelemetry-demo-imageprovider
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-imageprovider
+
+      - name: Rollback opentelemetry-demo-jaeger
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-jaeger
+
+      - name: Rollback opentelemetry-demo-kafka
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-kafka
+
+      - name: Rollback opentelemetry-demo-loadgenerator
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-loadgenerator
+
+      - name: Rollback opentelemetry-demo-paymentservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-paymentservice
+
+      - name: Rollback opentelemetry-demo-productcatalogservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-productcatalogservice
+
+      - name: Rollback opentelemetry-demo-quoteservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-quoteservice
+
+      - name: Rollback opentelemetry-demo-recommendationservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-recommendationservice
+
+      - name: Rollback opentelemetry-demo-shippingservice
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-shippingservice
+
+      - name: Rollback opentelemetry-demo-valkey
+        run: |
+          kubectl rollout undo deployment/opentelemetry-demo-valkey
