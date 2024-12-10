@@ -148,10 +148,6 @@ jobs:
         run: |
           kubectl rollout undo deployment/opentelemetry-demo-imageprovider
 
-      - name: Rollback opentelemetry-demo-jaeger
-        run: |
-          kubectl rollout undo deployment/opentelemetry-demo-jaeger
-
       - name: Rollback opentelemetry-demo-kafka
         run: |
           kubectl rollout undo deployment/opentelemetry-demo-kafka
