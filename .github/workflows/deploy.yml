@@ -43,7 +43,7 @@ jobs:
     - name: Build and Tag Docker Images with Docker Compose
       run: |
         export TAG=${{ github.sha }}
-        export IMAGE_NAME=sagarswagh/opentelemetry-demo
+        export IMAGE_NAME=aditi08302/otel-demo
         docker-compose build
         docker-compose push
 
