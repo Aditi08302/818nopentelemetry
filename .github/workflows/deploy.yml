@@ -15,8 +15,8 @@ jobs:
     with:
       push: true
       version: '1.0.0'
-      dockerhub_repo: '283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo'
-      ghcr_repo: '283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo'
+      dockerhub_repo: '' # No DockerHub, leave empty
+      ghcr_repo: '' # No GHCR, leave empty
 
   deploy:
     runs-on: ubuntu-latest
@@ -32,13 +32,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
+      - name: Authenticate with Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
       - name: Set up kubectl
         run: |
           aws eks --region us-east-1 update-kubeconfig --name otel-demo-cluster
 
       - name: Update Kubernetes Manifests and Deploy
         run: |
-          # Replace IMAGE_PLACEHOLDER dynamically in Kubernetes manifests for each service
           sed -i "s|IMAGE_PLACEHOLDER|283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo/service-name:1.0.0|g" opentelemtry-demo.yaml
           kubectl apply -f opentelemtry-demo.yaml -n otel-demo --validate=false
 
