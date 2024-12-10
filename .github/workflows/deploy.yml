@@ -33,7 +33,7 @@ jobs:
 
       - name: Apply Kubernetes Manifests
         run: |
-          kubectl apply -f opentelemetry-demo.yaml # Path to your Kubernetes manifest file
+          kubectl apply -f opentelemtry-demo.yaml -n $EKS_NAMESPACE --validate=false # Path to your Kubernetes manifest file
 
       - name: Verify Deployment
         run: |
