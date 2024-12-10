@@ -9,6 +9,7 @@ env:
   ECR_URI: 283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo
   AWS_REGION: us-east-1
   EKS_NAMESPACE: otel-demo
+  
 
 jobs:
   deploy:
@@ -68,7 +69,7 @@ jobs:
         EKS_NAMESPACE: ${{ env.EKS_NAMESPACE }}
       run: |
         SERVICES=(
-          "opentelemetry-demo-frontendproxy"
+          "opentelemetry-demo-frontendroxy"
           "opentelemetry-demo-loadgenerator"
           "opentelemetry-demo-frontend"
           "opentelemetry-demo-checkoutservice"
@@ -87,6 +88,7 @@ jobs:
           "opentelemetry-demo-imageprovider"
           "opentelemetry-demo-kafka"
         )
+
 
 
   rollback:
