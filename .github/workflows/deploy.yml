@@ -31,15 +31,10 @@ jobs:
 
     - name: Build and Tag Docker Images
       run: |
-        export IMAGE_NAME=283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo # Replace <your_account_id> with your AWS Account ID, <aws-region> with your AWS region, and <your_repository_name> with your ECR repository name
+        export IMAGE_NAME=283565981308.dkr.ecr.us-east-1.amazonaws.com/otel-demo # Replace with your ECR repository URL
         export TAG=${{ github.sha }}
-        docker build -t $IMAGE_NAME:$TAG .
-        docker tag $IMAGE_NAME:$TAG $IMAGE_NAME:latest
-
-    - name: Push Docker Image to ECR
-      run: |
-        docker push $IMAGE_NAME:$TAG
-        docker push $IMAGE_NAME:latest
+        docker-compose -f docker-compose.yml build # Use docker-compose to build
+        docker-compose -f docker-compose.yml push # Push images to ECR
 
   run_tests:
     runs-on: ubuntu-latest
@@ -62,25 +57,21 @@ jobs:
 
       - name: Set up AWS CLI
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} # Ensure the correct AWS Access Key is set in GitHub Secrets
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Ensure the correct AWS Secret Key is set in GitHub Secrets
-          aws configure set default.region us-east-1 # Replace with your AWS region (e.g., us-west-2)
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region us-east-1
 
       - name: Set up kubectl
         run: |
-          aws eks --region us-east-1 update-kubeconfig --name otel-demo-cluster # Replace otel-demo-cluster with the name of your EKS cluster
+          aws eks --region us-east-1 update-kubeconfig --name otel-demo-cluster # Replace otel-demo-cluster with your EKS cluster name
           
-      - name: Download deployment.yaml from GitHub
+      - name: Apply Kubernetes Manifests
         run: |
-          curl -o deployment.yaml https://raw.githubusercontent.com/Aditi08302/818nopentelemetry/refs/heads/main/opentelemtry-demo.yaml # Replace with the URL to your deployment YAML file in your repository
+          kubectl apply -f opentelemetry-demo.yaml # Use the provided Kubernetes manifest
 
-      - name: Deploy to EKS
+      - name: Verify Deployment
         run: |
-          kubectl config current-context
-          pwd
-          ls
           kubectl get pods
-          kubectl apply -f deployment.yaml
 
   rollback:
     runs-on: ubuntu-latest
@@ -89,14 +80,14 @@ jobs:
     steps:
       - name: Set up AWS CLI
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} # Ensure AWS Access Key is configured
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Ensure AWS Secret Key is configured
-          aws configure set default.region us-east-1 # Replace with your AWS region
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region us-east-1
   
       - name: Set up kubectl
         run: |
-          aws eks --region us-east-1 update-kubeconfig --name otel-demo-cluster # Replace otel-demo-cluster with the name of your EKS cluster
+          aws eks --region us-east-1 update-kubeconfig --name otel-demo-cluster
   
       - name: Rollback to previous stable version
         run: |
-          kubectl rollout undo deployment/otel-demo # Replace otel-demo-app with your deployment name
+          kubectl rollout undo deployment/otel-demo-paymentservice # Adjust deployment name as needed
