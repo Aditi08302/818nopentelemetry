@@ -51,47 +51,47 @@ jobs:
       fail-fast: false
       matrix:
         file_tag:
-          - file: src/accountingservice/Dockerfile
+          - file: ./src/accountingservice/Dockerfile
             tag_suffix: accountingservice
             context: ./
             setup-qemu: true
-          - file: src/adservice/Dockerfile
+          - file: ./src/adservice/Dockerfile
             tag_suffix: adservice
             context: ./
             setup-qemu: true
-          - file: src/cartservice/src/Dockerfile
+          - file: ./src/cartservice/src/Dockerfile
             tag_suffix: cartservice
             context: ./
             setup-qemu: false
-          - file: src/checkoutservice/Dockerfile
+          - file: ./src/checkoutservice/Dockerfile
             tag_suffix: checkoutservice
             context: ./
             setup-qemu: true
-          - file: src/currencyservice/Dockerfile
+          - file: ./src/currencyservice/Dockerfile
             tag_suffix: currencyservice
             context: ./
             setup-qemu: true
-          - file: src/emailservice/Dockerfile
+          - file: ./src/emailservice/Dockerfile
             tag_suffix: emailservice
             context: ./
             setup-qemu: true
-          - file: src/frauddetectionservice/Dockerfile
+          - file: ./src/frauddetectionservice/Dockerfile
             tag_suffix: frauddetectionservice
             context: ./
             setup-qemu: true
-          - file: src/frontend/Dockerfile
+          - file: ./src/frontend/Dockerfile
             tag_suffix: frontend
             context: ./
             setup-qemu: true
-          - file: src/frontendproxy/Dockerfile
+          - file: ./src/frontendproxy/Dockerfile
             tag_suffix: frontendproxy
             context: ./
             setup-qemu: true
-          - file: src/frontend/Dockerfile.cypress
+          - file: ./src/frontend/Dockerfile.cypress
             tag_suffix: frontend-tests
             context: ./
             setup-qemu: true
-          - file: src/imageprovider/Dockerfile
+          - file: ./src/imageprovider/Dockerfile
             tag_suffix: imageprovider
             context: ./
             setup-qemu: true
